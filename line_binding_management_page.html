@@ -1,0 +1,316 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.page{padding:1.5rem 1rem;max-width:680px;margin:0 auto}
+.page-title{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.5rem}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:1rem}
+.add-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer}
+.add-row:hover{background:var(--color-background-secondary)}
+.add-icon{width:28px;height:28px;border-radius:50%;background:#edfbf0;border:0.5px solid #b0e8c0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.add-icon svg{width:14px;height:14px;color:#1a9c3e}
+.add-text{font-size:14px;color:#1a9c3e;font-weight:500}
+.add-hint{font-size:12px;color:var(--color-text-tertiary);margin-left:auto}
+.account-row{border-top:0.5px solid var(--color-border-tertiary)}
+.account-row:first-child{border-top:none}
+.account-header{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;user-select:none}
+.account-header:hover{background:var(--color-background-secondary)}
+.avatar{width:36px;height:36px;border-radius:50%;background:#edfbf0;border:0.5px solid #b0e8c0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:#1a9c3e;flex-shrink:0}
+.account-info{flex:1;min-width:0}
+.account-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.account-meta{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
+.line-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:#edfbf0;color:#1a9c3e;padding:2px 7px;border-radius:10px;border:0.5px solid #b0e8c0;margin-left:6px;vertical-align:middle}
+.chevron{width:16px;height:16px;color:var(--color-text-tertiary);transition:transform .2s;flex-shrink:0}
+.chevron.open{transform:rotate(90deg)}
+.unbind-btn{font-size:12px;color:var(--color-text-danger);border:0.5px solid var(--color-border-danger);background:none;padding:4px 10px;border-radius:var(--border-radius-md);cursor:pointer;flex-shrink:0}
+.unbind-btn:hover{background:var(--color-background-danger)}
+.group-panel{background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary);padding:0}
+.group-panel-inner{padding:12px 16px 12px 52px}
+.group-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.group-section-title{font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.gen-token-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:#1a9c3e;border:0.5px solid #b0e8c0;background:#edfbf0;padding:4px 10px;border-radius:var(--border-radius-md);cursor:pointer}
+.gen-token-btn:hover{background:#d6f5e0}
+.group-list{display:flex;flex-direction:column;gap:6px}
+.group-item{display:flex;align-items:center;gap:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 12px}
+.group-icon{width:28px;height:28px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.group-name{flex:1;font-size:13px;color:var(--color-text-primary)}
+.group-meta{font-size:11px;color:var(--color-text-tertiary);margin-top:1px}
+.group-unbind{font-size:11px;color:var(--color-text-danger);border:0.5px solid var(--color-border-danger);background:none;padding:3px 8px;border-radius:var(--border-radius-md);cursor:pointer}
+.group-unbind:hover{background:var(--color-background-danger)}
+.empty-groups{font-size:13px;color:var(--color-text-tertiary);padding:8px 0;text-align:center}
+.modal-overlay{background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;min-height:320px;border-radius:var(--border-radius-lg);margin:0 -1rem}
+.modal-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:1.5rem;max-width:340px;width:100%}
+.modal-title{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--color-text-secondary);margin-bottom:16px}
+.token-display{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:14px;text-align:center;margin-bottom:12px}
+.token-code{font-family:var(--font-mono);font-size:26px;font-weight:500;color:var(--color-text-primary);letter-spacing:.12em}
+.token-timer{font-size:12px;color:var(--color-text-tertiary);margin-top:4px}
+.token-hint{background:#edfbf0;border:0.5px solid #b0e8c0;border-radius:var(--border-radius-md);padding:10px 12px;font-size:12px;color:#1a6e2e;margin-bottom:14px;line-height:1.6}
+.token-hint code{font-family:var(--font-mono);background:#d0f0dc;padding:1px 5px;border-radius:3px;font-size:11px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+.btn-close{font-size:13px;color:var(--color-text-secondary);border:0.5px solid var(--color-border-secondary);background:none;padding:6px 14px;border-radius:var(--border-radius-md);cursor:pointer}
+.btn-close:hover{background:var(--color-background-secondary)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:5px}
+.info-banner{display:flex;align-items:flex-start;gap:8px;background:var(--color-background-info);border:0.5px solid var(--color-border-info);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:1rem;font-size:12px;color:var(--color-text-info);line-height:1.6}
+</style>
+
+<div class="page" id="app"></div>
+
+<script>
+const state = {
+  accounts: [
+    {
+      id: 1, name: "Adam Chen", lineId: "U9f2a8b3c", email: "adam@example.com",
+      expanded: true,
+      groups: [
+        { id: 1, name: "共乘活動群組 A", members: 8, bound: "2024-03-10" },
+        { id: 2, name: "北部接送協調群", members: 12, bound: "2024-03-14" },
+      ]
+    }
+  ],
+  modal: null,
+  tokenTarget: null,
+  countdown: null,
+  secondsLeft: 600,
+};
+let timerInterval = null;
+
+function fmt(s){ const m=Math.floor(s/60),ss=s%60; return `${m}:${ss.toString().padStart(2,'0')}`}
+
+function render(){
+  const app = document.getElementById('app');
+  if(state.modal === 'token'){
+    app.innerHTML = tokenModal();
+    startTimer();
+    document.getElementById('btn-close-modal').onclick = closeModal;
+    document.getElementById('btn-copy').onclick = copyToken;
+    return;
+  }
+  if(state.modal === 'unbind-account'){
+    app.innerHTML = unbindAccountModal();
+    document.getElementById('btn-cancel').onclick = closeModal;
+    document.getElementById('btn-confirm').onclick = confirmUnbindAccount;
+    return;
+  }
+  if(state.modal === 'unbind-group'){
+    app.innerHTML = unbindGroupModal();
+    document.getElementById('btn-cancel').onclick = closeModal;
+    document.getElementById('btn-confirm').onclick = confirmUnbindGroup;
+    return;
+  }
+
+  app.innerHTML = mainPage();
+
+  document.getElementById('btn-add-account').onclick = addAccount;
+  state.accounts.forEach(acc => {
+    const hdr = document.getElementById(`acc-hdr-${acc.id}`);
+    if(hdr) hdr.onclick = () => toggleExpand(acc.id);
+    const ub = document.getElementById(`acc-unbind-${acc.id}`);
+    if(ub) ub.onclick = (e) => { e.stopPropagation(); showUnbindAccount(acc.id); };
+    if(acc.expanded){
+      const gt = document.getElementById(`gen-token-${acc.id}`);
+      if(gt) gt.onclick = (e) => { e.stopPropagation(); showTokenModal(acc.id); };
+      acc.groups.forEach(g => {
+        const gb = document.getElementById(`grp-unbind-${g.id}`);
+        if(gb) gb.onclick = () => showUnbindGroup(acc.id, g.id);
+      });
+    }
+  });
+}
+
+function mainPage(){
+  return `
+  <p class="page-title">LINE 綁定與群組管理</p>
+  <p class="page-sub">管理您的 LINE 帳號連結與通知群組</p>
+  <div class="info-banner">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/><line x1="8" y1="7" x2="8" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="5" r=".7" fill="currentColor"/></svg>
+    解除 LINE 帳號綁定時，其下所有群組綁定將一併移除。
+  </div>
+  <p class="section-label">第一層 — LINE 帳號綁定</p>
+  <div class="card">
+    <div class="add-row" id="btn-add-account">
+      <div class="add-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg></div>
+      <span class="add-text">新增 LINE 帳號綁定</span>
+      <span class="add-hint">→ LINE Login</span>
+    </div>
+    ${state.accounts.map(acc => accountRow(acc)).join('')}
+    ${state.accounts.length === 0 ? `<div style="padding:20px 16px;text-align:center;font-size:13px;color:var(--color-text-tertiary)">尚未綁定任何 LINE 帳號</div>` : ''}
+  </div>`;
+}
+
+function accountRow(acc){
+  const initials = acc.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  return `
+  <div class="account-row">
+    <div class="account-header" id="acc-hdr-${acc.id}">
+      <div class="avatar">${initials}</div>
+      <div class="account-info">
+        <div class="account-name">
+          ${acc.name}
+          <span class="line-badge"><span class="status-dot"></span>已連結</span>
+        </div>
+        <div class="account-meta">${acc.email} &nbsp;·&nbsp; ID: ${acc.lineId}</div>
+      </div>
+      <button class="unbind-btn" id="acc-unbind-${acc.id}">解除</button>
+      <svg class="chevron ${acc.expanded?'open':''}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6,4 10,8 6,12"/>
+      </svg>
+    </div>
+    ${acc.expanded ? groupPanel(acc) : ''}
+  </div>`;
+}
+
+function groupPanel(acc){
+  return `
+  <div class="group-panel">
+    <div class="group-panel-inner">
+      <div class="group-section-header">
+        <span class="group-section-title">第二層 — 群組綁定（${acc.groups.length} 個）</span>
+        <button class="gen-token-btn" id="gen-token-${acc.id}">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="5" width="12" height="8" rx="1.5"/><path d="M5 5V4a3 3 0 016 0v1"/></svg>
+          產生群組綁定代碼
+        </button>
+      </div>
+      <div class="group-list">
+        ${acc.groups.length === 0
+          ? `<div class="empty-groups">尚未綁定任何群組。點擊上方按鈕產生邀請碼。</div>`
+          : acc.groups.map(g => groupItem(g)).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function groupItem(g){
+  return `
+  <div class="group-item">
+    <div class="group-icon">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#555" stroke-width="1.4" stroke-linecap="round"><circle cx="6" cy="5" r="2"/><circle cx="11" cy="5" r="1.5"/><path d="M2 13c0-2.2 1.8-4 4-4s4 1.8 4 4"/><path d="M11 9c1.7 0 3 1.3 3 3"/></svg>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div class="group-name">${g.name}</div>
+      <div class="group-meta">${g.members} 位成員 &nbsp;·&nbsp; 綁定於 ${g.bound}</div>
+    </div>
+    <button class="group-unbind" id="grp-unbind-${g.id}">解除</button>
+  </div>`;
+}
+
+function tokenModal(){
+  const token = "888-999";
+  return `
+  <p class="page-title">LINE 綁定與群組管理</p>
+  <p class="page-sub">管理您的 LINE 帳號連結與通知群組</p>
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <p class="modal-title">群組綁定代碼</p>
+      <p class="modal-sub">將 Bot 加入群組後，輸入以下指令完成綁定</p>
+      <div class="token-display">
+        <div class="token-code">${token}</div>
+        <div class="token-timer" id="timer-display">有效時間 ${fmt(state.secondsLeft)}</div>
+      </div>
+      <div class="token-hint">
+        1. 在手機上將 Bot 加入目標群組<br>
+        2. 在群組中輸入：<code>#bind ${token}</code><br>
+        3. 綁定成功後此頁面將自動更新
+      </div>
+      <div class="modal-actions">
+        <button class="btn-close" id="btn-copy">複製指令</button>
+        <button class="btn-close" id="btn-close-modal">關閉</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function unbindAccountModal(){
+  const acc = state.accounts.find(a=>a.id===state.tokenTarget);
+  return `
+  <p class="page-title">LINE 綁定與群組管理</p>
+  <p class="page-sub">管理您的 LINE 帳號連結與通知群組</p>
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <p class="modal-title">解除 LINE 帳號綁定</p>
+      <p class="modal-sub" style="margin-bottom:12px">確定要解除 <strong style="color:var(--color-text-primary)">${acc?acc.name:''}</strong> 的 LINE 帳號連結嗎？</p>
+      <div style="background:var(--color-background-danger);border:0.5px solid var(--color-border-danger);border-radius:var(--border-radius-md);padding:10px 12px;font-size:12px;color:var(--color-text-danger);margin-bottom:14px;line-height:1.6">
+        此操作將同時移除該帳號下的 <strong>${acc?acc.groups.length:0} 個</strong>群組綁定，無法復原。
+      </div>
+      <div class="modal-actions">
+        <button class="btn-close" id="btn-cancel">取消</button>
+        <button style="font-size:13px;color:var(--color-text-danger);border:0.5px solid var(--color-border-danger);background:none;padding:6px 14px;border-radius:var(--border-radius-md);cursor:pointer" id="btn-confirm">確認解除</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function unbindGroupModal(){
+  const acc = state.accounts.find(a=>a.id===state.tokenTarget);
+  const grp = acc ? acc.groups.find(g=>g.id===state.groupTarget) : null;
+  return `
+  <p class="page-title">LINE 綁定與群組管理</p>
+  <p class="page-sub">管理您的 LINE 帳號連結與通知群組</p>
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <p class="modal-title">移除群組綁定</p>
+      <p class="modal-sub" style="margin-bottom:12px">確定要移除 <strong style="color:var(--color-text-primary)">${grp?grp.name:''}</strong> 嗎？</p>
+      <div style="background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:12px;color:var(--color-text-secondary);margin-bottom:14px;line-height:1.6">
+        只會移除群組綁定紀錄，不影響您的 LINE 帳號連結。
+      </div>
+      <div class="modal-actions">
+        <button class="btn-close" id="btn-cancel">取消</button>
+        <button style="font-size:13px;color:var(--color-text-danger);border:0.5px solid var(--color-border-danger);background:none;padding:6px 14px;border-radius:var(--border-radius-md);cursor:pointer" id="btn-confirm">確認移除</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleExpand(id){
+  const acc = state.accounts.find(a=>a.id===id);
+  if(acc) acc.expanded = !acc.expanded;
+  render();
+}
+
+function addAccount(){
+  const names = ["王小明","林美惠","張志豪","陳雅婷"];
+  const emails = ["ming@example.com","hui@example.com","hao@example.com","ting@example.com"];
+  const i = state.accounts.length % names.length;
+  state.accounts.push({
+    id: Date.now(), name: names[i], lineId: "U"+(Math.random().toString(36).slice(2,10)),
+    email: emails[i], expanded: false, groups: []
+  });
+  render();
+}
+
+function showTokenModal(accId){ state.modal='token'; state.tokenTarget=accId; state.secondsLeft=600; render(); }
+function showUnbindAccount(id){ state.modal='unbind-account'; state.tokenTarget=id; render(); }
+function showUnbindGroup(accId, gId){ state.modal='unbind-group'; state.tokenTarget=accId; state.groupTarget=gId; render(); }
+
+function closeModal(){ clearInterval(timerInterval); state.modal=null; render(); }
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    state.secondsLeft--;
+    const el = document.getElementById('timer-display');
+    if(el) el.textContent = state.secondsLeft>0 ? `有效時間 ${fmt(state.secondsLeft)}` : '代碼已過期';
+    if(state.secondsLeft<=0) clearInterval(timerInterval);
+  },1000);
+}
+
+function copyToken(){
+  const btn = document.getElementById('btn-copy');
+  if(btn){ btn.textContent='已複製！'; setTimeout(()=>{ if(btn) btn.textContent='複製指令'; },1500); }
+}
+
+function confirmUnbindAccount(){
+  state.accounts = state.accounts.filter(a=>a.id!==state.tokenTarget);
+  state.modal=null; render();
+}
+
+function confirmUnbindGroup(){
+  const acc = state.accounts.find(a=>a.id===state.tokenTarget);
+  if(acc) acc.groups = acc.groups.filter(g=>g.id!==state.groupTarget);
+  state.modal=null; render();
+}
+
+render();
+</script>
