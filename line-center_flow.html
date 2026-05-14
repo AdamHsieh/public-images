@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line center 系統流程圖</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 1200px;
+            overflow-x: auto;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+            border-bottom: 2px solid #eef2f7;
+            padding-bottom: 15px;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f0fe;
+            border-left: 5px solid #1a73e8;
+            font-size: 14px;
+            color: #3c4043;
+            max-width: 1200px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Line center 系統流程圖</h2>
+        <pre class="mermaid">
+
+sequenceDiagram
+    autonumber
+    actor User as 使用者
+    participant AppA as 系統 A (a.insynerger.com)
+    participant Center as Line-Center (line-center.insynerger.com)
+    participant LINE as LINE Platform (Login/Webhook)
+
+    Note over User, AppA: 使用者已登入系統 A 
+    User->>AppA: 進入「個人資料維護」
+    User->>AppA: 點擊 [LINE群組綁定管理]
+
+    rect rgb(240, 248, 255)
+    Note right of AppA: 安全性簽署邏輯
+    AppA->>AppA: "1. 準備參數 (userid=108, systemid=a, ts=...)"
+    AppA->>AppA: "2. 計算 HMAC Signature (sig)"
+    end
+
+    AppA->>User: "渲染頁面 (含 iframe 載入 line-center 網址)"
+    
+    Note over AppA, Center: 透過 iframe 跨網域載入
+    AppA->>Center: "GET /line/?userid=108&systemid=a&ts=...&sig=..."
+    
+    rect rgb(255, 250, 240)
+    Note right of Center: 身份驗證與授權
+    Center->>Center: "1. 驗證 ts (檢查是否過期)"
+    Center->>Center: "2. 驗證 sig (確保由系統 A 核發且未被竄改)"
+    end
+
+    Center->>User: "顯示 [LINE 帳號綁定] 管理頁面 (iframe 內容)"
+
+    alt 新增 LINE 帳號綁定
+        User->>Center: 點擊 [新增 LINE 帳號綁定]
+        Center->>User: "window.open (開啟 LINE Login 彈出視窗)"
+        User->>LINE: 登入並同意授權
+        LINE-->>Center: 重導向至 /line/auth-callback
+        Center->>Center: "更新資料庫 (建立系統 UserID 與 LineID 關聯)"
+        Center-->>User: 關閉彈出視窗並重新整理 iframe 內容
+    else 新增群組綁定 (使用驗證碼)
+        User->>Center: 點擊 [新增群組綁定]
+        Center-->>User: "顯示驗證碼彈窗 (例如 888-999)"
+        User->>LINE: "在 LINE 群組內輸入 #bind 888-999"
+        LINE->>Center: Webhook 轉發訊息事件
+        Center->>Center: "比對驗證碼，完成該群組 (GroupId) 的綁定"
+        Center-->>User: 管理介面更新綁定列表
+    end
+
+    User->>Center: 按下 [離開]
+    
+    rect rgb(240, 255, 240)
+    Note right of Center: "跨網域通訊 (postMessage)"
+    Center-->>AppA: "window.parent.postMessage('close_line_center', 'a.insynerger.com')"
+    end
+
+    AppA->>AppA: "監聽 message 事件，隱藏或關閉 iframe"
+    AppA-->>User: "回到系統 A「個人資料維護」原始頁面"
+
+        </pre>
+    </div>
+	<!--
+    <div class="info-box">
+        <strong>修正說明：</strong> 此版本已處理特殊字元與引號問題，解決了導致 "Syntax error in text" 的錯誤。如果預覽仍有問題，請確保網路連線正常以讀取 Mermaid 引擎。
+    </div>
+	-->
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'default',
+            securityLevel: 'loose',
+            sequence: {
+                showSequenceNumbers: true,
+                useMaxWidth: false,
+                messageFontSize: 14,
+                noteFontSize: 14,
+                actorFontSize: 16
+            }
+        });
+    </script>
+</body>
+</html>
